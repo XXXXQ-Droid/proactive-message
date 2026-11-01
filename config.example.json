@@ -1,0 +1,10 @@
+{
+  "proactivePlugin": {
+    "enabled": true,
+    "intervalMinutes": 120,
+    "startHour": 9,
+    "endHour": 23,
+    "includeQzone": true,
+    "targetKey": ""
+  }
+}
