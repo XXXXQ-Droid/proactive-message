@@ -1,0 +1,39 @@
+{
+  "name": "qq-bridge-plugin-proactive-message",
+  "version": "1.0.0",
+  "description": "qq-bridge plugin: periodically nudges the agent to consider sending a message or posting to Qzone",
+  "type": "module",
+  "main": "index.js",
+  "exports": {
+    ".": "./index.js"
+  },
+  "files": [
+    "index.js",
+    "settings.html",
+    "config.example.json",
+    "README.md",
+    "USAGE.zh-CN.md"
+  ],
+  "keywords": [
+    "qq-bridge",
+    "plugin",
+    "proactive",
+    "onebot",
+    "qzone",
+    "agent"
+  ],
+  "license": "MIT",
+  "engines": {
+    "node": ">=20"
+  },
+  "peerDependencies": {
+    "qq-bridge": ">=0.2.1"
+  },
+  "qqBridge": {
+    "plugin": true,
+    "api": 1,
+    "configKey": "proactivePlugin",
+    "stateFile": "state/proactive-plugin.json",
+    "settingsPage": "settings.html"
+  }
+}
