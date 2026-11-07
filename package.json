@@ -1,6 +1,6 @@
 {
   "name": "qq-bridge-plugin-proactive-message",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "qq-bridge plugin: periodically nudges the agent to consider sending a message or posting to Qzone",
   "type": "module",
   "main": "index.js",

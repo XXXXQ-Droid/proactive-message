@@ -11,37 +11,25 @@
 // 依赖全部由宿主注入，插件本身不碰文件系统以外的状态。
 
 export const PLUGIN_NAME = 'proactive-message';
-export const PLUGIN_VERSION = '1.0.0';
+export const PLUGIN_VERSION = '1.1.0';
 
 /** 构造提醒文案（纯函数，便于测试）。 */
 export function buildProactivePrompt(config = {}, key = '', token = '') {
-  const allow = config.allow || {};
-  const groupText = (allow.groups || []).join('、') || '（白名单为空=全部）';
-  const privateText = (allow.private || []).join('、') || '（白名单为空=全部）';
   const lines = [
-    '【主动提醒】现在轮到你决定要不要主动做点什么，不做也完全没问题：',
-    `· 想不想主动找个人聊两句？可以发给：群 ${groupText}；好友 ${privateText}。内容你自己定，发之前用 qq_get_recent_messages 看一眼气氛更好。`
+    '【主动提醒】现在是你自己的时间，决定要不要做下面两件事（内容全部由你自己定）：',
+    '① 向好友或群主动发条消息（任何好友、任何群都可以，不用看白名单）；',
+    '② 发一条空间说说（想刷好友动态、点赞评论也可以）。',
+    '规则：',
+    '· 两件都不想做 → 什么都不用做，本轮结束，算完成。',
+    '· 只想做一件 → 你自己挑一件做。',
+    '· 两件都做 → 必须先发说说/空间，再发消息。',
+    '做完或决定不做之后，不要复述这条提醒，也不要把令牌发出去。'
   ];
-  if (config.includeQzone !== false) {
-    lines.push('· 想不想发条空间说说？（qq_post_qzone；想刷好友动态也可以用 qq_qzone_feeds + qq_qzone_like / qq_qzone_comment）');
-  }
   if (key) lines.push(`· 你当前所在会话：${key}`);
   if (token) lines.push(`· 【会话令牌】${token}`);
-  lines.push('不想做就什么都不用做，无视这条提醒即可，也不用解释。不要复述这条提醒，更不要把这行令牌发出去。');
   return lines.join('\n');
 }
 
-/**
- * 创建插件实例。
- * @param {object} deps
- * @param {() => object} deps.getConfig              返回 { enabled, intervalMinutes, startHour, endHour, includeQzone, targetKey } 以及 allow/ownerQQ
- * @param {(key: string, text: string) => Promise<any>} deps.deliverPrompt  投递后台提醒
- * @param {(key: string) => string} deps.getAgentToken 取会话令牌
- * @param {() => object} deps.readState              读取 { lastRunAt, lastReason }
- * @param {(obj: object) => void} deps.writeState    保存状态
- * @param {(msg: string) => void} deps.log
- * @param {(msg: string) => void} deps.appendActivity
- */
 export function createProactivePlugin(deps) {
   const {
     getConfig,
@@ -93,7 +81,7 @@ export function createProactivePlugin(deps) {
     const hour = new Date().getHours();
     const start = Number(config.startHour ?? 9);
     const end = Number(config.endHour ?? 23);
-    if (hour < start || hour >= end) return;
+    if (hour < start || hour >= end) return; // 默认 0-24：桥在跑就是工作窗口
     const st = readState() || {};
     const intervalMs = Number(config.intervalMinutes || 120) * 60 * 1000;
     if (Date.now() - (Number(st.lastRunAt) || 0) < intervalMs) return;

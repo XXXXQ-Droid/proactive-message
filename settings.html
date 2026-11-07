@@ -6,59 +6,62 @@
 <title>插件设置 · 主动发消息</title>
 <style>
   :root { color-scheme: dark; }
-  body { margin: 0; padding: 28px; font: 14px/1.6 "Microsoft YaHei", system-ui, sans-serif; background: #0f1115; color: #e6e8ee; }
+  body { margin: 0; padding: 24px; font: 14px/1.6 "Microsoft YaHei", system-ui, sans-serif; background: #0f1115; color: #e6e8ee; }
   .wrap { max-width: 720px; margin: 0 auto; }
-  h1 { font-size: 20px; margin: 0 0 4px; }
-  .sub { color: #8b93a7; margin-bottom: 22px; }
-  .card { background: #171a21; border: 1px solid #262b36; border-radius: 12px; padding: 18px 20px; margin-bottom: 16px; }
-  label { display: block; margin: 12px 0 6px; color: #b9c0d0; }
-  input[type=number], input[type=text] { width: 140px; padding: 7px 10px; border-radius: 8px; border: 1px solid #2c3340; background: #0f1115; color: #e6e8ee; }
+  h1 { font-size: 19px; margin: 0 0 4px; }
+  .sub { color: #8b93a7; margin-bottom: 18px; font-size: 13px; }
+  .card { background: #171a21; border: 1px solid #262b36; border-radius: 12px; padding: 16px 18px; margin-bottom: 14px; }
+  h2 { font-size: 14px; margin: 0 0 10px; color: #d7dcea; }
+  label { display: block; margin: 10px 0 5px; color: #b9c0d0; }
+  input[type=number], input[type=text], textarea { width: 100%; box-sizing: border-box; padding: 7px 10px; border-radius: 8px; border: 1px solid #2c3340; background: #0f1115; color: #e6e8ee; font: inherit; }
+  input[type=number] { width: 150px; }
   input[type=checkbox] { width: 16px; height: 16px; vertical-align: -3px; }
-  .row { display: flex; gap: 18px; flex-wrap: wrap; align-items: center; }
-  button { padding: 8px 16px; border-radius: 8px; border: 1px solid #2f6fed; background: #2f6fed; color: #fff; cursor: pointer; font-size: 14px; }
+  button { padding: 7px 14px; border-radius: 8px; border: 1px solid #2f6fed; background: #2f6fed; color: #fff; cursor: pointer; font-size: 13px; }
   button.ghost { background: transparent; color: #9fb6ff; }
-  button:disabled { opacity: .5; cursor: default; }
-  .status { margin-top: 12px; color: #8b93a7; white-space: pre-wrap; }
-  .ok { color: #4ade80; }
-  .err { color: #f87171; }
-  .hint { color: #6f7789; font-size: 12px; margin-top: 4px; }
+  .row { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; margin-top: 12px; }
+  .status { margin-top: 10px; color: #8b93a7; white-space: pre-wrap; font-size: 13px; }
+  .ok { color: #4ade80; } .err { color: #f87171; }
+  .hint { color: #6f7789; font-size: 12px; margin-top: 3px; }
+  textarea { height: 130px; font-family: Consolas, monospace; font-size: 12px; }
 </style>
 </head>
 <body>
 <div class="wrap">
   <h1>主动发消息</h1>
-  <div class="sub">每隔一段时间提醒 Agent：要不要主动找人聊两句、要不要发一条空间动态。它想发就发，不想发就忽略。仅在桥运行期间生效。</div>
+  <div class="sub">桥启动即开始计时，桥关闭即结束。期间每隔一段时间提醒一次，由 Agent 自己决定发不发。</div>
 
   <div class="card">
-    <div class="row">
-      <label style="margin:0"><input type="checkbox" id="enabled"> 启用插件</label>
-    </div>
+    <h2>参数</h2>
+    <div class="row"><label style="margin:0"><input type="checkbox" id="enabled"> 启用插件</label></div>
     <label>提醒间隔（分钟，10~720）</label>
-    <input type="number" id="intervalMinutes" min="10" max="720" step="10" value="120">
-    <div class="row" style="margin-top:12px">
-      <div>
-        <label>生效起始小时（0~23）</label>
-        <input type="number" id="startHour" min="0" max="23" value="9">
-      </div>
-      <div>
-        <label>生效结束小时（1~24）</label>
-        <input type="number" id="endHour" min="1" max="24" value="23">
-      </div>
-    </div>
-    <div class="row" style="margin-top:12px">
-      <label style="margin:0"><input type="checkbox" id="includeQzone"> 同时提醒「发空间动态 / 浏览好友动态」</label>
-    </div>
-    <div class="hint">提醒投递给哪个会话（留空则使用 ownerQQ 私聊）：<input type="text" id="targetKey" placeholder="private:&lt;QQ&gt;" style="width:220px;margin-left:6px"></div>
-
-    <div class="row" style="margin-top:18px">
-      <button id="save">保存设置</button>
+    <input type="number" id="intervalMinutes" min="10" max="720" step="10" value="60">
+    <div class="hint">默认 60 分钟。计时起点是桥启动，终点是桥关闭。</div>
+    <div class="row"><label style="margin:0"><input type="checkbox" id="includeQzone"> 提醒里包含「发空间说说 / 刷动态」</label></div>
+    <label>提醒投递给哪个会话（留空 = ownerQQ 私聊）</label>
+    <input type="text" id="targetKey" placeholder="private:&lt;QQ&gt; 或 group:&lt;群号&gt;">
+    <div class="row">
+      <button id="save">保存</button>
       <button id="runNow" class="ghost">立即触发一次</button>
     </div>
     <div class="status" id="status"></div>
   </div>
 
   <div class="card">
-    <div style="color:#b9c0d0">运行状态</div>
+    <h2>导入 / 导出</h2>
+    <div class="hint">导出当前参数为 JSON；粘贴 JSON 后点导入，会先校验再写入。</div>
+    <div class="row">
+      <button id="export">导出为文件</button>
+      <button id="copy" class="ghost">复制</button>
+      <button id="fill" class="ghost">载入当前配置</button>
+    </div>
+    <label>配置 JSON</label>
+    <textarea id="json"></textarea>
+    <div class="row"><button id="import">导入</button></div>
+    <div class="status" id="ioStatus"></div>
+  </div>
+
+  <div class="card">
+    <h2>运行状态</h2>
     <div class="status" id="state"></div>
   </div>
 </div>
@@ -66,13 +69,7 @@
 <script>
 const token = new URLSearchParams(location.search).get('token') || '';
 const $ = (id) => document.getElementById(id);
-const statusEl = $('status');
-const stateEl = $('state');
-
-function setStatus(msg, cls) {
-  statusEl.className = 'status ' + (cls || '');
-  statusEl.textContent = msg;
-}
+const setStatus = (el, msg, cls) => { const n = $(el); n.className = 'status ' + (cls || ''); n.textContent = msg; };
 
 async function api(path, opts) {
   const sep = path.includes('?') ? '&' : '?';
@@ -81,53 +78,70 @@ async function api(path, opts) {
   try { return { status: res.status, body: JSON.parse(text) }; } catch { return { status: res.status, body: { raw: text } }; }
 }
 
+function currentConfig() {
+  return {
+    enabled: $('enabled').checked,
+    intervalMinutes: Number($('intervalMinutes').value),
+    includeQzone: $('includeQzone').checked,
+    targetKey: $('targetKey').value.trim()
+  };
+}
+
 function fill(cfg, state) {
-  $('enabled').checked = cfg.enabled === true;
-  $('intervalMinutes').value = cfg.intervalMinutes ?? 120;
-  $('startHour').value = cfg.startHour ?? 9;
-  $('endHour').value = cfg.endHour ?? 23;
+  $('enabled').checked = cfg.enabled !== false;
+  $('intervalMinutes').value = cfg.intervalMinutes ?? 60;
   $('includeQzone').checked = cfg.includeQzone !== false;
   $('targetKey').value = cfg.targetKey || '';
-  const last = state && state.lastRunAt ? new Date(state.lastRunAt).toLocaleString() : '尚未触发';
-  stateEl.textContent = `上次触发：${last}\n运行方式：随桥进程生命周期（桥停即停）`;
+  const last = state && state.lastRunAt ? new Date(state.lastRunAt).toLocaleString() : '还没触发过';
+  $('state').textContent = '上次触发：' + last + '\n窗口：桥在运行期间生效（桥停即停）\n规则：两项都不做 = 完成；只做一件自己挑；两件都做先说再发消息';
+  $('json').value = JSON.stringify(currentConfig(), null, 2);
 }
 
 async function load() {
   const r = await api('/api/plugin/proactive', { method: 'GET' });
-  if (r.status !== 200) { setStatus('读取失败（' + r.status + '）：' + JSON.stringify(r.body), 'err'); return; }
+  if (r.status !== 200) { setStatus('status', '读取失败（' + r.status + '）', 'err'); return; }
   fill(r.body.config || {}, r.body.state || {});
-  setStatus('已读取当前设置', 'ok');
+  setStatus('status', '已读取', 'ok');
 }
 
 $('save').onclick = async () => {
-  const payload = {
-    enabled: $('enabled').checked,
-    intervalMinutes: Number($('intervalMinutes').value),
-    startHour: Number($('startHour').value),
-    endHour: Number($('endHour').value),
-    includeQzone: $('includeQzone').checked,
-    targetKey: $('targetKey').value.trim()
-  };
-  const r = await api('/api/plugin/proactive', {
-    method: 'POST',
-    headers: { 'content-type': 'application/json' },
-    body: JSON.stringify(payload)
-  });
-  if (r.status === 200 && r.body.ok) { fill(r.body.config, {}); setStatus('已保存', 'ok'); }
-  else setStatus('保存失败：' + JSON.stringify(r.body), 'err');
+  const r = await api('/api/plugin/proactive', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(currentConfig()) });
+  if (r.status === 200 && r.body.ok) { fill(r.body.config, {}); setStatus('status', '已保存', 'ok'); }
+  else setStatus('status', '保存失败：' + JSON.stringify(r.body), 'err');
 };
 
 $('runNow').onclick = async () => {
   $('runNow').disabled = true;
-  setStatus('正在触发…');
-  const r = await api('/api/plugin/proactive/run', {
-    method: 'POST',
-    headers: { 'content-type': 'application/json' },
-    body: '{}'
-  });
+  setStatus('status', '正在触发…');
+  const r = await api('/api/plugin/proactive/run', { method: 'POST', headers: { 'content-type': 'application/json' }, body: '{}' });
   $('runNow').disabled = false;
-  setStatus(r.body && r.body.ok ? ('已投递提醒，目标 ' + (r.body.key || '')) : ('触发失败：' + JSON.stringify(r.body)), r.body && r.body.ok ? 'ok' : 'err');
+  setStatus('status', r.body && r.body.ok ? ('已投递，目标 ' + (r.body.key || '')) : ('触发失败：' + JSON.stringify(r.body)), r.body && r.body.ok ? 'ok' : 'err');
   load();
+};
+
+$('export').onclick = () => {
+  const blob = new Blob([JSON.stringify(currentConfig(), null, 2)], { type: 'application/json' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'proactive-plugin-config.json';
+  a.click();
+  URL.revokeObjectURL(a.href);
+  setStatus('ioStatus', '已导出', 'ok');
+};
+
+$('copy').onclick = async () => {
+  try { await navigator.clipboard.writeText(JSON.stringify(currentConfig(), null, 2)); setStatus('ioStatus', '已复制', 'ok'); }
+  catch { setStatus('ioStatus', '复制失败，请手动选中', 'err'); }
+};
+
+$('fill').onclick = () => { $('json').value = JSON.stringify(currentConfig(), null, 2); };
+
+$('import').onclick = async () => {
+  let cfg;
+  try { cfg = JSON.parse($('json').value); } catch { setStatus('ioStatus', 'JSON 解析失败', 'err'); return; }
+  const r = await api('/api/plugin/proactive', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(cfg) });
+  if (r.status === 200 && r.body.ok) { fill(r.body.config, {}); setStatus('ioStatus', '导入成功', 'ok'); }
+  else setStatus('ioStatus', '导入失败：' + JSON.stringify(r.body), 'err');
 };
 
 load();
